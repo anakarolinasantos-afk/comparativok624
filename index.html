@@ -152,7 +152,6 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;min
     <button class="tab" onclick="showTab('sem',event)">Comparação sem ST</button>
     <button class="tab" onclick="showTab('unit',event)">Custo unitário</button>
     <button class="tab" onclick="showTab('itens',event)">Por item</button>
-    <button class="tab" onclick="showTab('prem',event)">Premissas alteradas</button>
   </div>
 
   <!-- COM ST -->
@@ -162,8 +161,7 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;min
       <div>
         <div class="alert-title">Comparação como orçado (inclui a ST do estudo inicial)</div>
         <ul>
-          <li>O estudo inicial previa <b id="c_stVal"></b> de Substituição Tributária. Como a carga é para consumo, a prévia não tem ST.</li>
-          <li>É essa linha que explica o resultado abaixo do orçado. Sem ela, as demais linhas variam <b id="c_varComp"></b> (aba "Comparação sem ST").</li>
+          <li>O estudo inicial previa Substituição Tributária. Como a carga é para consumo, a prévia não tem ST.</li>
           <li>Créditos de PIS/COFINS e ICMS desconsiderados a pedido do cliente: a análise usa o Custo Total, antes dos créditos.</li>
         </ul>
       </div>
@@ -302,23 +300,6 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;min
       <li>"Var. c/ ST" compara com o orçado original. "Var. s/ ST" compara só as linhas equivalentes.</li></ul></div>
     </div>
   </div>
-
-  <!-- PREMISSAS -->
-  <div id="tab-prem" class="section">
-    <div class="table-wrap">
-      <div class="premise-row head"><span>Premissa</span><span>Estudo inicial</span><span>Prévia</span><span>Efeito</span></div>
-      <div class="premise-row key"><span class="pn">Substituição Tributária<br><span class="tag">Mudança de regra</span></span><span>R$ 277.956,52 (MVA 55%)</span><span>R$ 0,00 - carga para consumo, sem ST</span><span class="impact" id="pST"></span></div>
-      <div class="premise-row key"><span class="pn">Créditos tributários<br><span class="tag">Desconsiderados</span></span><span>PIS/COFINS R$ 195.246,00<br>ICMS R$ 505.375,50</span><span>Cliente não tem crédito de PIS/COFINS nem de ICMS. Não são considerados na análise.</span><span class="impact">Comparação feita no Custo Total, antes dos créditos</span></div>
-      <div class="premise-row"><span class="pn">Câmbio</span><span>Referência: R$ 5,0800 (para entrada, saldo e desembaraço)</span><span>Entrada 20%: R$ 4,9670<br>Saldo 80%: R$ 5,3300<br>Desembaraço: R$ 5,2132</span><span class="impact" id="pFx"></span></div>
-      <div class="premise-row"><span class="pn">Frete internacional</span><span>US$ 6.800,00 por CNTR<br>Total US$ 68.000,00 (10 CNTR)</span><span>US$ 6.875,00 por CNTR<br>Total US$ 68.750,00</span><span class="impact">+US$ 750,00 (+1,10%)</span></div>
-      <div class="premise-row"><span class="pn">Seguro</span><span>US$ 2.112,42</span><span>US$ 2.220,26</span><span class="impact">+US$ 107,84 (+5,11%)</span></div>
-      <div class="premise-row"><span class="pn">Frete marítimo local</span><span>THC R$ 12.000,00<br>Drop off / Damage Fee R$ 120,00<br>Bunker R$ 155,00<br>Logistic Fee R$ 250,00</span><span>THC R$ 16.150,00<br>Drop off R$ 2.200,00 + Damage Fee R$ 2.400,70<br>Bunker R$ 3.200,93<br>Logistic Fee removida<br>Novo: IOF R$ 12.837,07</span><span class="impact" id="pFM"></span></div>
-      <div class="premise-row"><span class="pn">Armazenagem 1º período</span><span>R$ 27.284,60</span><span>R$ 30.000,00</span><span class="impact">+R$ 2.715,40 (+9,95%)</span></div>
-      <div class="premise-row"><span class="pn">Outras taxas de desembaraço</span><span>Correios R$ 50,00</span><span>Correios removido<br>Novo: Catálogo Duimp R$ 440,00</span><span class="impact">+R$ 390,00</span></div>
-      <div class="premise-row"><span class="pn">Frete terrestre (Porto x Cliente)</span><span>R$ 12.000,00 por CNTR<br>Total R$ 120.000,00</span><span>R$ 11.000,00 por CNTR<br>Total R$ 110.000,00</span><span class="impact">-R$ 10.000,00 (-8,33%)</span></div>
-      <div class="premise-row"><span class="pn">Mercadoria (FOB)</span><span>US$ 256.987,59</span><span>US$ 256.987,59</span><span class="impact">Sem alteração em USD</span></div>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -333,7 +314,7 @@ const fx=[
 ];
 const groups=[
   {n:'Produto (FOB)',s:'Produto',a:1305496.96,r:1351086.56},
-  {n:'Frete Internacional',s:'Frete Intl.',a:359257.60,r:366773.34},
+  {n:'Frete Internacional + taxas de frete',s:'Frete + taxas',a:359257.60+13967.48,r:366773.34+40251.19},
   {n:'Seguro',s:'Seguro',a:11160.33,r:11590.64},
   {n:'Impostos de importação (clique para detalhar)',s:'Impostos',ch:[
     ['Imposto de Importação (I.I.)',415417.01,427427.47],
@@ -342,15 +323,6 @@ const groups=[
     ['COFINS',160350.97,164987.01],
     ['Taxa Siscomex',214.50,154.23]]},
   {n:'ICMS',s:'ICMS',a:505375.50,r:523619.75},
-  {n:'Frete Marítimo - locais (clique para detalhar)',s:'Frete marít.',ch:[
-    ['Liberação de BL',650,635],
-    ['Capatazia / THC',12000,16150],
-    ['Desconsolidação',528.32,426.79],
-    ['Drop off / Damage Fee',120,4600.70],
-    ['IOF',0,12837.07],
-    ['Bunker',155,3200.93],
-    ['Logistic Fee',250,0],
-    ['ISPS no destino',264.16,2400.70]]},
   {n:'Desp. Desembaraço (clique para detalhar)',s:'Desembaraço',ch:[
     ['AFRMM - Marinha Mercante',29720.61,29984.59],
     ['Armazenagem 1º período',27284.60,30000],
@@ -406,8 +378,6 @@ $('fxGrid').innerHTML='<div class="fx-item ref"><span class="fx-label">Referênc
   fx.map(f=>{const d=(f.r/fxRef-1)*100;return '<div class="fx-item"><span class="fx-label">'+f.l+'</span><span class="fx-val">'+fmt4(f.r)+'</span><span class="fx-badge '+(d>0?'up':'down')+'">'+pct(d)+' vs ref.</span></div>'}).join('');
 
 /* ===== TEXTOS E KPIs ===== */
-$('c_stVal').textContent=fmtBRL(st.a);
-$('c_varComp').textContent=pct(varComp);
 $('cApr').textContent=fmtBRL(totalAprST);
 $('cRea').textContent=fmtBRL(totalReal);
 $('cDif').textContent=sgn(difTot);
@@ -423,12 +393,8 @@ $('kDif').textContent=sgn(difComp);
 $('kDifSub').textContent=pct(varComp)+' sobre o aprovado';
 let mi=0,mv=-Infinity;
 groups.forEach((g,i)=>{const d=g.r-g.a;if(d>mv){mv=d;mi=i}});
-$('kMaior').textContent=cats[mi];
+$('kMaior').textContent=cats[mi]+(mi===0?' (Câmbio)':'');
 $('kMaiorSub').textContent=sgn(mv)+' ('+pct(mv/groups[mi].a*100)+')';
-$('pST').textContent='-'+fmtBRL(st.a)+' (não se aplica)';
-$('pFx').textContent='Entrada '+pct((4.967/fxRef-1)*100)+' · saldo '+pct((5.33/fxRef-1)*100)+' · registro '+pct((5.2132/fxRef-1)*100)+' vs referência';
-const fm=groups[5];
-$('pFM').textContent=sgn(fm.r-fm.a)+' ('+pct((fm.r-fm.a)/fm.a*100)+')';
 
 /* ===== TABELAS ===== */
 function rowHTML(c,aV,rV,note){
