@@ -82,14 +82,6 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;min
 .chart-legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px}
 .leg-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted2);font-weight:500}
 .leg-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
-.unit-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:28px}
-.unit-card{background:var(--surface);border:1.5px solid var(--border2);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden}
-.unit-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.unit-card.blue::before{background:var(--blue)}.unit-card.orange::before{background:var(--orange)}.unit-card.red::before{background:var(--red)}.unit-card.amber::before{background:var(--amber)}.unit-card.green::before{background:var(--green)}
-.unit-card-label{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
-.unit-card-val{font-size:24px;font-weight:700}
-.unit-card.blue .unit-card-val{color:var(--blue)}.unit-card.orange .unit-card-val{color:var(--orange)}.unit-card.red .unit-card-val{color:var(--red)}.unit-card.amber .unit-card-val{color:var(--amber)}.unit-card.green .unit-card-val{color:var(--green)}
-.unit-card-sub{font-size:10.5px;color:var(--muted);margin-top:5px}
 .items-head,.items-row{display:grid;grid-template-columns:2.2fr .7fr 1fr 1fr 1fr .9fr .9fr 1.2fr}
 .items-head{padding:12px 24px;background:var(--surface2);border-bottom:1px solid var(--border2);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
 .items-head span:not(:first-child),.items-row .val{text-align:right}
@@ -150,7 +142,6 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;min
   <div class="tabs">
     <button class="tab active" onclick="showTab('com',event)">Comparação com ST</button>
     <button class="tab" onclick="showTab('sem',event)">Comparação sem ST</button>
-    <button class="tab" onclick="showTab('unit',event)">Custo unitário</button>
     <button class="tab" onclick="showTab('itens',event)">Por item</button>
   </div>
 
@@ -255,35 +246,6 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;min
     </div>
   </div>
 
-  <!-- CUSTO UNITÁRIO -->
-  <div id="tab-unit" class="section">
-    <div class="unit-card-grid">
-      <div class="unit-card blue"><div class="unit-card-label">Unitário aprovado (com ST)</div><div class="unit-card-val" id="uAprST"></div><div class="unit-card-sub" id="uAprSTSub"></div></div>
-      <div class="unit-card blue"><div class="unit-card-label">Unitário aprovado (sem ST)</div><div class="unit-card-val" id="uApr"></div><div class="unit-card-sub" id="uAprSub"></div></div>
-      <div class="unit-card orange"><div class="unit-card-label">Unitário realizado</div><div class="unit-card-val" id="uRea"></div><div class="unit-card-sub" id="uReaSub"></div></div>
-      <div class="unit-card green"><div class="unit-card-label">Variação vs com ST</div><div class="unit-card-val" id="uVarST"></div><div class="unit-card-sub" id="uVarSTSub"></div></div>
-      <div class="unit-card red"><div class="unit-card-label">Variação vs sem ST</div><div class="unit-card-val" id="uVar"></div><div class="unit-card-sub" id="uVarSub"></div></div>
-    </div>
-    <div class="charts-grid">
-      <div class="chart-wrap full">
-        <div class="chart-title">Custo unitário (R$/kg) por categoria - aprovado (sem ST) x realizado</div>
-        <div class="chart-legend">
-          <span class="leg-item"><span class="leg-dot" style="background:#2563eb"></span>Aprovado</span>
-          <span class="leg-item"><span class="leg-dot" style="background:#ea580c"></span>Realizado</span>
-        </div>
-        <div style="position:relative;height:320px"><canvas id="unitBarChart"></canvas></div>
-      </div>
-      <div class="chart-wrap">
-        <div class="chart-title">Composição do unitário aprovado (sem ST)</div>
-        <div style="position:relative;height:280px"><canvas id="unitPieApr"></canvas></div>
-      </div>
-      <div class="chart-wrap">
-        <div class="chart-title">Composição do unitário realizado</div>
-        <div style="position:relative;height:280px"><canvas id="unitPieRea"></canvas></div>
-      </div>
-    </div>
-  </div>
-
   <!-- POR ITEM -->
   <div id="tab-itens" class="section">
     <div class="table-wrap items-wrap">
@@ -325,7 +287,7 @@ const groups=[
   {n:'ICMS',s:'ICMS',a:505375.50,r:523619.75},
   {n:'Desp. Desembaraço (clique para detalhar)',s:'Desembaraço',ch:[
     ['AFRMM - Marinha Mercante',29720.61,29984.59],
-    ['Armazenagem 1º período',27284.60,30000],
+    ['Armazenagem 1º período',27284.60,35323.94],
     ['Despachante e SDA',3300,3055.50],
     ['Catálogo Duimp',0,440],
     ['Correios',50,0],
@@ -337,20 +299,20 @@ const groups=[
 groups.forEach(g=>{if(g.ch){g.a=g.ch.reduce((s,c)=>s+c[1],0);g.r=g.ch.reduce((s,c)=>s+c[2],0)}});
 const st={a:277956.52,r:0};
 const apr=groups.map(g=>g.a),rea=groups.map(g=>g.r),cats=groups.map(g=>g.s);
-const totalApr=3106504.63,totalReal=3215288.22;
+const totalApr=3106504.63,totalReal=3220612.16;
 const totalAprST=3384461.15;
 const items=[
-  {n:'Viga de suporte 2072 mm (8,24 kg)',q:4834,uST:113.13,uSem:103.84,uRea:107.47,tST:546861.30,tSem:501949.08,tRea:519526.33},
-  {n:'Viga de suporte 2572 mm (10,09 kg)',q:3894,uST:134.99,uSem:123.90,uRea:128.24,tST:525650.64,tSem:482480.39,tRea:499375.89},
-  {n:'Viga de suporte 3072 mm (11,94 kg)',q:4347,uST:157.25,uSem:144.33,uRea:149.39,tST:683551.67,tSem:627413.44,tRea:649384.21},
-  {n:'Pallet 1000x1000x1100 (37,65 kg)',q:55,uST:324.90,uSem:298.21,uRea:308.66,tST:17869.37,tSem:16401.81,tRea:16976.17},
-  {n:'Prancha 250x50x1,5x2000 (10,25 kg)',q:1000,uST:151.85,uSem:139.38,uRea:144.26,tST:151847.17,tSem:139376.37,tRea:144257.06},
-  {n:'Prancha 250x50x1,5x2500 (12,76 kg)',q:1000,uST:189.38,uSem:173.83,uRea:179.91,tST:189380.94,tSem:173827.60,tRea:179914.70},
-  {n:'Prancha 250x50x1,5x3000 (15,27 kg)',q:1600,uST:224.68,uSem:206.22,uRea:213.45,tST:359481.37,tSem:329958.15,tRea:341512.63},
-  {n:'Prancha 300x50x1,5x1500 (8,81 kg)',q:2000,uST:132.36,uSem:121.49,uRea:125.74,tST:264711.88,tSem:242971.82,tRea:251480.21},
-  {n:'Prancha 300x50x1,5x2000 (11,65 kg)',q:2600,uST:174.89,uSem:160.53,uRea:166.15,tST:454724.97,tSem:417379.66,tRea:431995.46},
-  {n:'Prancha 300x50x1,5x2500 (14,49 kg)',q:400,uST:217.56,uSem:199.70,uRea:206.69,tST:87025.68,tSem:79878.50,tRea:82675.68},
-  {n:'Prancha 300x50x1,5x3000 (17,33 kg)',q:400,uST:258.39,uSem:237.17,uRea:245.47,tST:103356.16,tSem:94867.80,tRea:98189.88}
+  {n:'Viga de suporte 2072 mm (8,24 kg)',q:4834,uST:113.13,uSem:103.84,uRea:107.65,tST:546861.30,tSem:501949.08,tRea:520386.58},
+  {n:'Viga de suporte 2572 mm (10,09 kg)',q:3894,uST:134.99,uSem:123.90,uRea:128.45,tST:525650.64,tSem:482480.39,tRea:500202.77},
+  {n:'Viga de suporte 3072 mm (11,94 kg)',q:4347,uST:157.25,uSem:144.33,uRea:149.63,tST:683551.67,tSem:627413.44,tRea:650459.47},
+  {n:'Pallet 1000x1000x1100 (37,65 kg)',q:55,uST:324.90,uSem:298.21,uRea:309.17,tST:17869.37,tSem:16401.81,tRea:17004.27},
+  {n:'Prancha 250x50x1,5x2000 (10,25 kg)',q:1000,uST:151.85,uSem:139.38,uRea:144.5,tST:151847.17,tSem:139376.37,tRea:144495.92},
+  {n:'Prancha 250x50x1,5x2500 (12,76 kg)',q:1000,uST:189.38,uSem:173.83,uRea:180.21,tST:189380.94,tSem:173827.60,tRea:180212.6},
+  {n:'Prancha 250x50x1,5x3000 (15,27 kg)',q:1600,uST:224.68,uSem:206.22,uRea:213.8,tST:359481.37,tSem:329958.15,tRea:342078.11},
+  {n:'Prancha 300x50x1,5x1500 (8,81 kg)',q:2000,uST:132.36,uSem:121.49,uRea:125.95,tST:264711.88,tSem:242971.82,tRea:251896.62},
+  {n:'Prancha 300x50x1,5x2000 (11,65 kg)',q:2600,uST:174.89,uSem:160.53,uRea:166.43,tST:454724.97,tSem:417379.66,tRea:432710.76},
+  {n:'Prancha 300x50x1,5x2500 (14,49 kg)',q:400,uST:217.56,uSem:199.70,uRea:207.03,tST:87025.68,tSem:79878.50,tRea:82812.58},
+  {n:'Prancha 300x50x1,5x3000 (17,33 kg)',q:400,uST:258.39,uSem:237.17,uRea:245.88,tST:103356.16,tSem:94867.80,tRea:98352.47}
 ];
 
 /* ===== FORMATOS ===== */
@@ -474,21 +436,6 @@ new Chart($('barChart2'),{type:'bar',data:{labels:catsST,datasets:barDS(aprST,re
 const diffs=reaST.map((r,i)=>r-aprST[i]);
 new Chart($('diffChart2'),{type:'bar',data:{labels:catsST,datasets:[{label:'Diferença',data:diffs,backgroundColor:diffs.map(v=>v>0?'rgba(220,38,38,0.7)':'rgba(30,158,98,0.7)'),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+sgn(ctx.parsed.y)}}},scales:scalesBRL}});
 new Chart($('pieChart2'),{type:'doughnut',data:{labels:catsST,datasets:[{data:aprST,backgroundColor:pieColors,borderColor:'#fff',borderWidth:3,hoverOffset:8}]},options:pieOpt(aprST)});
-
-/* ===== UNITÁRIO ===== */
-const unitApr=apr.map(v=>v/qtd),unitRea=rea.map(v=>v/qtd);
-const uAST=totalAprST/qtd,uA=totalApr/qtd,uR=totalReal/qtd;
-$('uAprST').textContent=fmtU(uAST);$('uAprSTSub').textContent='por kg - total '+fmtBRL(totalAprST);
-$('uApr').textContent=fmtU(uA);$('uAprSub').textContent='por kg - total '+fmtBRL(totalApr);
-$('uRea').textContent=fmtU(uR);$('uReaSub').textContent='por kg - total '+fmtBRL(totalReal);
-$('uVarST').textContent=(uR-uAST>=0?'+':'-')+fmtU(Math.abs(uR-uAST));
-$('uVarSTSub').textContent=pct(varTot)+' por kg - '+sgn(difTot)+' no total';
-$('uVar').textContent=(uR-uA>=0?'+':'-')+fmtU(Math.abs(uR-uA));
-$('uVarSub').textContent=pct(varComp)+' por kg - '+sgn(difComp)+' no total';
-new Chart($('unitBarChart'),{type:'bar',data:{labels:cats,datasets:[{label:'Aprovado (R$/kg)',data:unitApr,backgroundColor:'rgba(37,99,235,0.75)',borderRadius:6},{label:'Realizado (R$/kg)',data:unitRea,backgroundColor:'rgba(234,88,12,0.75)',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' R$ '+ctx.parsed.y.toFixed(4)+'/kg'}}},scales:{x:scalesBRL.x,y:{ticks:{color:tc,font:{family:ff,size:11},callback:v=>'R$ '+v.toFixed(2)},grid:{color:gc}}}}});
-const upie=(arr)=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:tc,font:{family:ff,size:9},padding:8,boxWidth:8}},tooltip:{callbacks:{label:ctx=>' R$ '+ctx.parsed.toFixed(4)+'/kg ('+(ctx.parsed/arr.reduce((a,b)=>a+b,0)*100).toFixed(1)+'%)'}}}});
-new Chart($('unitPieApr'),{type:'doughnut',data:{labels:cats,datasets:[{data:unitApr,backgroundColor:pieColors,borderColor:'#fff',borderWidth:3,hoverOffset:8}]},options:upie(unitApr)});
-new Chart($('unitPieRea'),{type:'doughnut',data:{labels:cats,datasets:[{data:unitRea,backgroundColor:pieColors,borderColor:'#fff',borderWidth:3,hoverOffset:8}]},options:upie(unitRea)});
 
 /* ===== ITENS ===== */
 function vb(v){return '<span><span class="badge '+(v<0?'down':'up')+'">'+(v<0?'▼':'▲')+' '+pctAbs(v)+'</span></span>'}
