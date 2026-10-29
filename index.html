@@ -152,7 +152,7 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;min
       <div>
         <div class="alert-title">Premissas Alteradas</div>
         <ul>
-          <li>O estudo inicial previa Substituição Tributária, porém, como a carga é para consumo, a prévia não contabiliza ST.</li>
+          <li>O estudo inicial previa Substituição Tributária, porém, como a carga é para consumo, o fechamento não contabiliza ST.</li>
           <li>Créditos de PIS/COFINS e ICMS desconsiderados: a análise usa o Custo Total, sem os créditos.</li>
         </ul>
       </div>
@@ -160,7 +160,7 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;min
 
     <div class="kpi-grid">
       <div class="kpi-card blue"><div class="kpi-label">Total aprovado (com ST)</div><div class="kpi-val" id="cApr"></div><div class="kpi-sub">Estudo inicial</div></div>
-      <div class="kpi-card orange"><div class="kpi-label">Total realizado</div><div class="kpi-val" id="cRea"></div><div class="kpi-sub">Prévia, sem ST</div></div>
+      <div class="kpi-card orange"><div class="kpi-label">Total realizado</div><div class="kpi-val" id="cRea"></div><div class="kpi-sub">Fechamento, sem ST</div></div>
       <div class="kpi-card green"><div class="kpi-label">Diferença</div><div class="kpi-val" id="cDif"></div><div class="kpi-sub" id="cDifSub"></div></div>
       <div class="kpi-card amber"><div class="kpi-label">ST não aplicável</div><div class="kpi-val" id="cSt"></div><div class="kpi-sub">Removida (carga para consumo)</div></div>
       <div class="kpi-card red"><div class="kpi-label">Demais linhas (sem ST)</div><div class="kpi-val" id="cComp"></div><div class="kpi-sub" id="cCompSub"></div></div>
@@ -211,7 +211,7 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;min
 
     <div class="kpi-grid">
       <div class="kpi-card blue"><div class="kpi-label">Aprovado (sem ST)</div><div class="kpi-val" id="kAprComp"></div><div class="kpi-sub">Estudo inicial sem a ST</div></div>
-      <div class="kpi-card red"><div class="kpi-label">Realizado (prévia)</div><div class="kpi-val" id="kRea"></div><div class="kpi-sub">Custo total apurado até agora</div></div>
+      <div class="kpi-card red"><div class="kpi-label">Realizado (fechamento)</div><div class="kpi-val" id="kRea"></div><div class="kpi-sub">Custo total do fechamento</div></div>
       <div class="kpi-card red"><div class="kpi-label">Diferença</div><div class="kpi-val" id="kDif"></div><div class="kpi-sub" id="kDifSub"></div></div>
       <div class="kpi-card purple"><div class="kpi-label">Maior desvio</div><div class="kpi-val" id="kMaior"></div><div class="kpi-sub" id="kMaiorSub"></div></div>
     </div>
@@ -289,30 +289,30 @@ const groups=[
     ['AFRMM - Marinha Mercante',29720.61,29984.59],
     ['Armazenagem 1º período',27284.60,35323.94],
     ['Despachante e SDA',3300,3055.50],
-    ['Catálogo Duimp',0,440],
+    ['Catálogo Duimp',0,360],
     ['Correios',50,0],
-    ['Lavagem de CTNR',2500,2500],
-    ['Taxa Madeira',200,200],
+    ['Lavagem de CTNR',2500,2690],
+    ['Taxa Madeira',200,350],
     ['Serviços Kaizen (7%)',117314.04,117314.04]]},
   {n:'Frete Terrestre (Porto x Cliente)',s:'Frete terrestre',a:120000,r:110000}
 ];
 groups.forEach(g=>{if(g.ch){g.a=g.ch.reduce((s,c)=>s+c[1],0);g.r=g.ch.reduce((s,c)=>s+c[2],0)}});
 const st={a:277956.52,r:0};
 const apr=groups.map(g=>g.a),rea=groups.map(g=>g.r),cats=groups.map(g=>g.s);
-const totalApr=3106504.63,totalReal=3220612.16;
+const totalApr=3106504.63,totalReal=3220872.16;
 const totalAprST=3384461.15;
 const items=[
-  {n:'Viga de suporte 2072 mm (8,24 kg)',q:4834,uST:113.13,uSem:103.84,uRea:107.65,tST:546861.30,tSem:501949.08,tRea:520386.58},
-  {n:'Viga de suporte 2572 mm (10,09 kg)',q:3894,uST:134.99,uSem:123.90,uRea:128.45,tST:525650.64,tSem:482480.39,tRea:500202.77},
-  {n:'Viga de suporte 3072 mm (11,94 kg)',q:4347,uST:157.25,uSem:144.33,uRea:149.63,tST:683551.67,tSem:627413.44,tRea:650459.47},
-  {n:'Pallet 1000x1000x1100 (37,65 kg)',q:55,uST:324.90,uSem:298.21,uRea:309.17,tST:17869.37,tSem:16401.81,tRea:17004.27},
-  {n:'Prancha 250x50x1,5x2000 (10,25 kg)',q:1000,uST:151.85,uSem:139.38,uRea:144.5,tST:151847.17,tSem:139376.37,tRea:144495.92},
-  {n:'Prancha 250x50x1,5x2500 (12,76 kg)',q:1000,uST:189.38,uSem:173.83,uRea:180.21,tST:189380.94,tSem:173827.60,tRea:180212.6},
-  {n:'Prancha 250x50x1,5x3000 (15,27 kg)',q:1600,uST:224.68,uSem:206.22,uRea:213.8,tST:359481.37,tSem:329958.15,tRea:342078.11},
-  {n:'Prancha 300x50x1,5x1500 (8,81 kg)',q:2000,uST:132.36,uSem:121.49,uRea:125.95,tST:264711.88,tSem:242971.82,tRea:251896.62},
-  {n:'Prancha 300x50x1,5x2000 (11,65 kg)',q:2600,uST:174.89,uSem:160.53,uRea:166.43,tST:454724.97,tSem:417379.66,tRea:432710.76},
-  {n:'Prancha 300x50x1,5x2500 (14,49 kg)',q:400,uST:217.56,uSem:199.70,uRea:207.03,tST:87025.68,tSem:79878.50,tRea:82812.58},
-  {n:'Prancha 300x50x1,5x3000 (17,33 kg)',q:400,uST:258.39,uSem:237.17,uRea:245.88,tST:103356.16,tSem:94867.80,tRea:98352.47}
+  {n:'Viga de suporte 2072 mm (8,24 kg)',q:4834,uST:113.13,uSem:103.84,uRea:107.66,tST:546861.30,tSem:501949.08,tRea:520428.59},
+  {n:'Viga de suporte 2572 mm (10,09 kg)',q:3894,uST:134.99,uSem:123.90,uRea:128.47,tST:525650.64,tSem:482480.39,tRea:500243.15},
+  {n:'Viga de suporte 3072 mm (11,94 kg)',q:4347,uST:157.25,uSem:144.33,uRea:149.65,tST:683551.67,tSem:627413.44,tRea:650511.98},
+  {n:'Pallet 1000x1000x1100 (37,65 kg)',q:55,uST:324.90,uSem:298.21,uRea:309.19,tST:17869.37,tSem:16401.81,tRea:17005.65},
+  {n:'Prancha 250x50x1,5x2000 (10,25 kg)',q:1000,uST:151.85,uSem:139.38,uRea:144.51,tST:151847.17,tSem:139376.37,tRea:144507.58},
+  {n:'Prancha 250x50x1,5x2500 (12,76 kg)',q:1000,uST:189.38,uSem:173.83,uRea:180.23,tST:189380.94,tSem:173827.60,tRea:180227.15},
+  {n:'Prancha 250x50x1,5x3000 (15,27 kg)',q:1600,uST:224.68,uSem:206.22,uRea:213.82,tST:359481.37,tSem:329958.15,tRea:342105.73},
+  {n:'Prancha 300x50x1,5x1500 (8,81 kg)',q:2000,uST:132.36,uSem:121.49,uRea:125.96,tST:264711.88,tSem:242971.82,tRea:251916.95},
+  {n:'Prancha 300x50x1,5x2000 (11,65 kg)',q:2600,uST:174.89,uSem:160.53,uRea:166.44,tST:454724.97,tSem:417379.66,tRea:432745.70},
+  {n:'Prancha 300x50x1,5x2500 (14,49 kg)',q:400,uST:217.56,uSem:199.70,uRea:207.05,tST:87025.68,tSem:79878.50,tRea:82819.26},
+  {n:'Prancha 300x50x1,5x3000 (17,33 kg)',q:400,uST:258.39,uSem:237.17,uRea:245.90,tST:103356.16,tSem:94867.80,tRea:98360.41}
 ];
 
 /* ===== FORMATOS ===== */
